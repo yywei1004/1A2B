@@ -85,17 +85,17 @@
                     window.clearInterval(clk);
                     Input.setAttribute("hidden","");
                     document.getElementById('ipt_btn').setAttribute("hidden","");
-                    exinputArray += `
+                    exinputArray = `
                     <tr>
                         <th scope="row">${InputArray[0]}${InputArray[1]}${InputArray[2]}</th>
                         <td>${A}A</td>
-                    </tr>`;
+                    </tr>` + exinputArray;
                 } else {
-                    exinputArray += `
+                    exinputArray = `
                     <tr>
                         <th scope="row">${InputArray[0]}${InputArray[1]}${InputArray[2]}</th>
                         <td>${A}A${B}B</td>
-                    </tr>`;
+                    </tr>` + exinputArray;
                 }
                 document.getElementById('times').innerHTML = `猜測次數:${times}`;
                 document.getElementById('guess').innerHTML = exinputArray;
