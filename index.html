@@ -60,7 +60,6 @@
         Input.addEventListener('keypress', function (e) {
             if (e.key == 'Enter') {
                 input();
-                Input.value = '';
             }
         });
         //重置
@@ -101,6 +100,7 @@
                 document.getElementById('times').innerHTML = `猜測次數:${times}`;
                 document.getElementById('guess').innerHTML = exinputArray;
             }
+            Input.value = '';
         }
         //判斷XAXB
         function check(InputArray) {
