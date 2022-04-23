@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1A2B</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-5 d-flex flex-column align-items-center">
+        <h1 class="m-5">猜數字</h1>
+        <div>
+            <input id="input" type="number">
+            <button id="ipt_btn" class="btn btn-primary" onclick="input()">輸入</button>
+            <button class="btn btn-danger" onclick="reset()">重置</button>
+        </div>
+        <p id="times">猜測次數:0</p>
+        <p id="clock">經過時間00:00:00</p>
+        <p id="alert" style="color: red; height: 16px;"></p>
+        <div id="answer"></div>
+        <div class="row">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">我的數字</th>
+                        <th scope="col">結果</th>
+                    </tr>
+                </thead>
+                <tbody id="guess">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        //宣告
+        let max = 3;
+        let Input = document.getElementById('input');
+        let Alert = document.getElementById('alert');
+        let exinputArray = [];
+        let ranArray = [];
+        let A = 0;
+        let B = 0;
+        let times = 0;
+        let second = 0;
+        let clk_s = 0;
+        let start = false;
+        //起始
+        window.onload = random;
+        Input.addEventListener('keypress', function (e) {
+            if (e.key == 'Enter') {
+                input();
+                Input.value = '';
+            }
+        });
+        //重置
+        function reset() {
+            window.location.reload();
+        }
+        //輸入判斷
+        function input() {
+            let InputArray = Input.value.split("");
+            if (Input.value.length != max) {
+                Alert.innerHTML = `請輸入${max}位數`;
+            } else if (!isunique(InputArray)) {
+                Alert.innerHTML = '請輸入不同的數字';
+            } else {
+                times += 1;
+                if (start == false) {
+                    start = true;
+                    clk = window.setInterval("clock()", 1000);
+                }
+                Alert.innerHTML = '';
+                check(InputArray);
+                if (A == max) {
+                    window.clearInterval(clk);
+                    Input.setAttribute("hidden","");
+                    document.getElementById('ipt_btn').setAttribute("hidden","");
+                    exinputArray += `
+                    <tr>
+                        <th scope="row">${InputArray[0]}${InputArray[1]}${InputArray[2]}</th>
+                        <td>${A}A</td>
+                    </tr>`;
+                } else {
+                    exinputArray += `
+                    <tr>
+                        <th scope="row">${InputArray[0]}${InputArray[1]}${InputArray[2]}</th>
+                        <td>${A}A${B}B</td>
+                    </tr>`;
+                }
+                document.getElementById('times').innerHTML = `猜測次數:${times}`;
+                document.getElementById('guess').innerHTML = exinputArray;
+            }
+        }
+        //判斷XAXB
+        function check(InputArray) {
+            A = 0;
+            B = 0;
+            for (let i = 0; i < max; i++) {
+                if (ranArray[i] == parseInt(InputArray[i])) {
+                    A += 1;
+                }
+                if (ranArray.includes(parseInt(InputArray[i]))) {
+                    B += 1;
+                }
+            }
+            B = B - A;
+        }
+        //產生隨機數字
+        function random() {
+            let array = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            for (i = 0; i < max; i++) {
+                ran = Math.floor(Math.random() * (9 - i));
+                ranArray.push(array.splice(ran, 1)[0]);
+            }
+            //document.getElementById('answer').innerHTML = ranArray;
+        }
+        //判定是否重複
+        function isunique(array) {
+            let sametimes = 0;
+            for (let i = 0; i < array.length; i++) {
+                for (let j = i + 1; j < array.length; j++) {
+                    if (array[i] == array[j]) {
+                        sametimes += 1;
+                    }
+                }
+            }
+            if (sametimes == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+        //計時器
+        function clock() {
+            second += 1;
+            clk_s = second % 60;
+            clk_m = Math.floor(Math.floor(second / 60) % 60);
+            clk_h = Math.floor(second / 3600);
+            clk_s = String(clk_s).padStart(2, '0');
+            clk_m = String(clk_m).padStart(2, '0');
+            clk_h = String(clk_h).padStart(2, '0');
+            document.getElementById('clock').innerHTML = `經過時間${clk_h}:${clk_m}:${clk_s}`;
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
