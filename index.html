@@ -20,15 +20,22 @@
 <body>
     <div class="container d-flex flex-column align-items-center">
         <h1 class="m-5" style="font-size: 40px;">猜數字</h1>
+        <div class="d-flex mb-3">
+            <h5 class="m-0 me-3">猜測字數</h5>
+            <select name="max" id="max">
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
         <div>
-            <input id="input" class="w-50" type="number">
+            <input id="input" class="w-50" type="number" onkeyup="value=value.replace(/[^1-9]/g,'')">
             <button id="ipt_btn" class="btn btn-primary" onclick="input()">輸入</button>
             <button class="btn btn-danger" onclick="reset()">重置</button>
         </div>
         <p id="alert" style="color: red; height: 16px;"></p>
         <p id="times">猜測次數:0</p>
         <p id="clock">經過時間00:00:00</p>
-        <div id="answer"></div>
         <div class="row">
             <table class="table table-striped table-hover">
                 <thead>
@@ -44,27 +51,40 @@
     </div>
     <script>
         //宣告
-        let max = 3;
+        let maxElement = document.getElementById('max');
+        let max = maxElement.value;
         let Input = document.getElementById('input');
         let Alert = document.getElementById('alert');
         let exinputArray = [];
         let ranArray = [];
-        let A = 0;
-        let B = 0;
         let times = 0;
         let second = 0;
-        let clk_s = 0;
         let start = false;
         //起始
-        window.onload = random;
+        window.onload = random();
         Input.addEventListener('keypress', function (e) {
             if (e.key == 'Enter') {
                 input();
             }
         });
+        maxElement.addEventListener('change', function (e) {
+            max = maxElement.value;
+            reset();
+        });
         //重置
         function reset() {
-            window.location.reload();
+            Input.removeAttribute("hidden","");
+            document.getElementById('ipt_btn').removeAttribute("hidden","");
+            document.getElementById('times').innerHTML = `猜測次數:0`;
+            document.getElementById('clock').innerHTML = "經過時間00:00:00";
+            document.getElementById('guess').innerHTML = "";
+            exinputArray = [];
+            ranArray = [];
+            times = 0;
+            A = 0;
+            B = 0;
+            resetclock();
+            random();
         }
         //輸入判斷
         function input() {
@@ -87,13 +107,13 @@
                     document.getElementById('ipt_btn').setAttribute("hidden","");
                     exinputArray = `
                     <tr>
-                        <th scope="row">${InputArray[0]}${InputArray[1]}${InputArray[2]}</th>
+                        <th scope="row">${Input.value}</th>
                         <td>${A}A</td>
                     </tr>` + exinputArray;
                 } else {
                     exinputArray = `
                     <tr>
-                        <th scope="row">${InputArray[0]}${InputArray[1]}${InputArray[2]}</th>
+                        <th scope="row">${Input.value}</th>
                         <td>${A}A${B}B</td>
                     </tr>` + exinputArray;
                 }
@@ -123,7 +143,6 @@
                 ran = Math.floor(Math.random() * (9 - i));
                 ranArray.push(array.splice(ran, 1)[0]);
             }
-            //document.getElementById('answer').innerHTML = ranArray;
         }
         //判定是否重複
         function isunique(array) {
@@ -151,6 +170,13 @@
             clk_m = String(clk_m).padStart(2, '0');
             clk_h = String(clk_h).padStart(2, '0');
             document.getElementById('clock').innerHTML = `經過時間${clk_h}:${clk_m}:${clk_s}`;
+        }
+        function resetclock() {
+            if (start == true) {
+                start = false;
+                second = 0;
+                window.clearInterval(clk);
+            }
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
